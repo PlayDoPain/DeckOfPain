@@ -207,12 +207,14 @@ h2,h3{margin:0 0 .5em;}
   body.game-active .effect,body.game-active .privilege{margin-top:2px;}
   body.game-active .cardwrap{width:min(13vh,12vw);}
   body.game-active .cardbtn{width:min(8vh,7vw);}
-  body.game-active #p-boy{display:flex; flex-wrap:wrap; align-content:flex-start; gap:4px 10px;}
-  body.game-active #p-boy .ph,body.game-active #p-boy .hand{width:100%; margin-bottom:0;}
-  body.game-active #p-boy .mercy-status{flex:1; min-width:0; margin-top:0;}
-  body.game-active #p-boy .btn-mercy{width:130px; margin-top:0; align-self:flex-end;}
+  /* Boy: hand scrolls on its own; the counter row stays pinned at the bottom */
+  body.game-active #p-boy{display:flex; flex-direction:column; overflow:hidden;}
+  body.game-active #p-boy .hand{flex:1; min-height:0; overflow-y:auto; align-content:flex-start; -webkit-overflow-scrolling:touch;}
+  body.game-active .boy-actions{flex:none; display:flex; gap:10px; align-items:stretch; margin-top:6px; padding-top:6px; border-top:1px dashed rgba(14,140,138,.5);}
+  body.game-active .boy-actions .mercy-status{flex:1; min-width:0; margin-top:0; justify-content:center; max-height:96px; overflow-y:auto;}
+  body.game-active .boy-actions .btn-mercy{width:130px; margin-top:0;}
   body.game-active .cards{gap:6px;}
-  body.game-active .hand{padding-top:10px;}
+  body.game-active .hand{padding-top:16px;}
   body.game-active .mercy-status{margin-top:6px; font-size:.85rem;}
   body.game-active .opt{min-height:34px; padding:3px 8px;}
   body.game-active .btn-mercy{margin-top:6px; min-height:40px;}
@@ -220,4 +222,12 @@ h2,h3{margin:0 0 .5em;}
   body.game-active #btn-execute{min-height:46px; padding:6px 30px; font-size:1.2rem;}
   body.game-active .credits{padding:5px 10px calc(5px + var(--safe-b)); font-size:.66rem;}
   body.game-active .credits p{display:inline; margin:0 4px;}
+}
+
+/* Landscape: put the clothing/restraint badges beside the swat count */
+@media (min-width:700px) and (min-height:620px) and (orientation:landscape){
+  body.game-active #p-punish{display:flex; flex-wrap:wrap; align-content:flex-start; align-items:center; justify-content:center; column-gap:18px;}
+  body.game-active #p-punish .ph{width:100%;}
+  body.game-active #p-punish .effects{margin-top:0; flex-direction:column; align-items:flex-start; gap:6px;}
+  body.game-active #p-punish .privilege,body.game-active #p-punish .mercy-line{flex-basis:100%;}
 }

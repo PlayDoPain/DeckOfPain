@@ -270,8 +270,8 @@
     else status = opts.map((k, i) => `<label class="opt ${i === Math.min(S.optIndex, opts.length - 1) ? 'on' : ''}"><input type="radio" name="opt" value="${i}" ${i === Math.min(S.optIndex, opts.length - 1) ? 'checked' : ''}><b>${E.MERCY[k].label}</b> — ${E.MERCY[k].effect}</label>`).join('');
     $('p-boy').innerHTML = `<h3 class="ph">Boy <span class="tag mercy">Hand: ${S.hand.length}</span></h3>
       <div class="cards hand">${cards || '<p class="muted">Hand is empty.</p>'}</div>
-      <div class="mercy-status">${status}</div>
-      <button type="button" class="btn btn-mercy" id="btn-counter" ${(!opts.length || S.counter) ? 'disabled' : ''}>Counter</button>`;
+      <div class="boy-actions"><div class="mercy-status">${status}</div>
+      <button type="button" class="btn btn-mercy" id="btn-counter" ${(!opts.length || S.counter) ? 'disabled' : ''}>Counter</button></div>`;
     S.newHand = new Set();
   }
 

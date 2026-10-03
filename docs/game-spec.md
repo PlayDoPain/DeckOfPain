@@ -1,67 +1,55 @@
-# Deck of Pain III: Original build spec
+# Build notes
 
-The design brief the app was built from. Kept for reference; the code and `config/game.yaml` are the source of truth.
+How the app was specified and the choices made along the way. The code and [`config/game.yaml`](../config/game.yaml) are the source of truth.
 
-## Cover Page
+## Screens
 
-- Use v3.3's title on top: DECK OF PAIN III and BY U/PLAYDOPAIN. Keep the title persistent throughout.
-- A disclaimer to say that this is a game for adults, but there's no explicit content on the website. Click Enter to go to the setup page.
+### Cover
+- Shows the title and byline, which stay visible on every screen.
+- A short notice says the game is intended for adults and the site has no explicit content. An Enter button continues to setup.
 
-## Setup
+### Setup
+- All parameters live in `config/game.yaml`: the option list (each entry on or off by default), the maximum number of restraint-type effects, deck size, hand sizes and default text fields.
+- Options appear as tiles with an easy-to-recognise icon. Entries marked `yes` start selected, and All/None buttons are provided.
+- Two free-text fields hold the default text for each of the two modes (clothed and restrained).
+- A button shuffles the deck and starts the game.
 
-- Create a yaml file to store all game parameters:
-	- IMPLEMENT_LIST: hand:yes, hair brush:yes, leather paddle:no, belt:yes, shoe horn:yes, wooden paddle:yes, fly swatter:no, crop:no, cane:yes, ping pong paddle:yes, ruler:yes
-	- MAX_RESTRAINTS: 4
-- A Sir panel on the left or on top depending on the browser dimensions. Tile all available implements based on IMPLEMENT_LIST and pre-select the ones with a yes value as default, add a All/None option, too. Each implement should have a vector art icon associated with it that is easy to identify.
-- A Boy panel next or below the Sir panel that has two free text fields:
-	- Privilege (clothed): default text is "Get a rub"
-	- Privilege (restrained): default text is "Get a rub"
-- A button to shuffle the deck and begin the game.
+### Round
+- Counters: game number, round number, intensity (starts at 3, +1 each replay), items removed, items added (capped by the configured maximum).
+- A 3D drawing pile that shrinks as cards are drawn (52 cards plus 2 Jokers).
+- A mode toggle (clothed or restrained) that can change at any time.
+- Four panels:
+  1. **Item:** a random pick from the selected options, shown with its icon and name.
+  2. **Result:** the total from the drawn cards, shown large, with an icon for each side effect. A side effect is hidden once its cap has been reached. When a special hand is played, the matching text from setup appears here.
+  3. **Dealer:** the cards drawn this round (as many as the intensity), not selectable.
+  4. **Player:** the hand. Up to three cards can be selected, and a Counter button registers a valid combination.
+- Execute ends the round and starts the next one.
+- When the pile is empty, a prompt offers a replay: game +1, intensity +1.
+- An End game button, with an "Are you sure?" prompt, is available at any time.
 
-## Round
+### Game over
+- Per-item totals with icons, plus totals for games, rounds, items removed and items added.
+- Number of times each combination was played.
+- Elapsed time from the first shuffle to the end of the game.
+- A button saves the summary as a picture.
 
-- Add a counter that shows
-	- Game: 1, 2, ... (+1 in NG+)
-	- Round: 1, 2, ...
-	- Intensity: 3, 4, ... (+1 in NG+)
-	- A 3D illustration of a deck/draw pile that becomes shorter/thinner based on how many cards left in the deck (full deck has 52 cards + 2 jokers).
-	- Number of clothing removed: 0, 1, ...
-	- Number of restraints added: 0, 1, ... (no more than MAX_RESTRAINTS)
-- There should be a toggle between Clothed and Restrained that initialize as Clothed and can be changed at any point in the game.
-- Create a panel with 2 by 2 sub-panels
-	- Top 2
-		- Implement: randomized from the selected implements (use both vector art and text)
-		- Punishment: effect from Sir's cards. Refresh after Counter. Use big font for number of swats. If it's removing closing, display an icon like a combination of the minus icon and a pair of shorts icon, if it's adding restraint, display an icon like a combination of a plus icon and a rope. If MAX_RESTRAINTS restraints have already been added, do not show add restraint icon. Show clothing or restraint icon based on the Clothed/Restrained toggle. If Privilege is invoked, based on the toggle, show the text previously entered during setup.
-	- Bottom 2
-		- Sir (unmutable): drawing Intensity number of cards from the remaining pile (if remaining pile < Intensity, exhaust the remaining pile)
-		- Boy: can select up to 3 with an allowable Mercy counter (single, pair, ...), click Counter to register.
-- Button: Execute.
-	- Round +1.
-	- Repeat.
-- When all cards from the pile are exhausted, prompt to Start NewGame+.
-	- Game +1.
-	- Intensity +1.
-- There should be a button to end the game at any time. Just need an "Are you sure?" prompt.
+Nothing is stored: no cookies, local storage or server.
 
-## Game Over
+## Layout
 
-- Show the following statistics:
-	- Each implement icon that's used with the total number of swats next to each.
-	- Total numbers of games, rounds, clothing removed, restraint added.
-	- Each mercy with the total times of revoking each.
-	- Total elapsed time (from button to shuffle to end the game).
-- A button to save the session statistics in a picture.
+- Phones: single column, page scrolls.
+- Tablets and laptops (at least 700 px wide and 620 px tall): the game screen fits the viewport without scrolling. A panel with too much content scrolls on its own.
+- In landscape, the side-effect badges sit beside the total, and the Player panel keeps its Counter row pinned at the bottom.
 
 ## Rules decisions
 
-Where the poster is silent, the app follows these choices.
+Where the original rules sheet is silent, the app follows these choices.
 
-- The deck is 52 cards plus 2 Jokers. A Joker is worth 10 and is wild in Boy's Hand.
-- Boy's Hand starts with 3 cards and gains 1 per round. Sir draws first, so a nearly empty pile goes to Sir.
-- Boy gets one Mercy counter per round. A Straight Flush offers both options.
-- A Single cannot reduce swats below 0. A Pair is unavailable when the pile is empty.
+- The deck is 52 cards plus 2 Jokers. A Joker is worth 10 and is wild in the player's hand.
+- The hand starts with 3 cards and gains 1 per round. The dealer draws first, so a nearly empty pile goes to the dealer.
+- One counter per round. A straight flush offers both options.
+- A single card cannot reduce the total below 0. A pair is unavailable when the pile is empty.
 - Straights allow Ace low or high, with no wrap-around.
-- Flush: Boy picks the implement from the selected list.
-- Three of a Kind: Boy rewrites the Privilege for the current mode.
-- Played Mercy cards and Sir's cards go to the discard pile. New Game+ reshuffles only the discards, and Boy keeps his Hand.
-
+- A flush lets the player pick the item from the selected list.
+- Three of a kind lets the player rewrite the text for the current mode.
+- Played and drawn cards go to the discard pile. A replay reshuffles only the discards, and the player keeps their hand.
