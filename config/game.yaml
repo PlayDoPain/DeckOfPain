@@ -1,0 +1,36 @@
+# Deck of Pain III - game parameters
+# Edit this file to change defaults; the app reads it on load.
+
+# Implements shown on the setup page. yes = pre-selected by default.
+IMPLEMENT_LIST:
+  hand: yes
+  hair brush: yes
+  leather paddle: no
+  belt: yes
+  shoe horn: yes
+  wooden paddle: yes
+  fly swatter: no
+  crop: no
+  cane: yes
+  ping pong paddle: yes
+  ruler: yes
+
+# Most restraints that can be added over the whole session.
+MAX_RESTRAINTS: 4
+
+# Deck: 52 cards plus this many Jokers.
+JOKERS: 2
+
+# Sir draws this many cards in the first game (+1 per New Game+).
+STARTING_INTENSITY: 3
+
+# Boy's Hand starts with this many cards, then gains 1 per round.
+BOY_STARTING_HAND: 3
+BOY_CARDS_PER_ROUND: 1
+
+# Most cards Boy may play in a single Mercy counter.
+MAX_MERCY_CARDS: 3
+
+# Default Privilege text on the setup page.
+DEFAULT_PRIVILEGE_CLOTHED: Get a rub
+DEFAULT_PRIVILEGE_RESTRAINED: Get a rub
