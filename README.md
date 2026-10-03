@@ -1,15 +1,15 @@
 # Deck of Pain III
 
-A card-based game for consenting adults, playable in the browser. The app plays **Sir**: it shuffles the deck, picks an implement and draws the Punishment. **Boy** holds a Hand of cards and can counter with Mercy.
+A two-role card game for the browser. The app plays **Sir**: it shuffles the deck and draws the cards. **Boy** holds a Hand and can counter with poker-style combinations.
 
-> **Adults only (18+).** The site contains no explicit content: playing cards, rules text and simple icons only.
+The game is intended for adult players. The site contains only playing cards, rules text and simple icons.
 
 **Play:** `https://playdopain.github.io/DeckOfPain/` (once Pages is enabled)
 
 ## Features
 
-- Rules from the v3.3 (Patch 3) poster: Punishment, five Mercy hands (Single, Pair, Flush, Straight, Three of a Kind), wild Joker, New Game+, restraints and clothing.
-- Configurable implements, Privileges and game parameters via [`config/game.yaml`](config/game.yaml).
+- Rules from the v3.3 (Patch 3) poster: five counter hands (Single, Pair, Flush, Straight, Three of a Kind), wild Joker and New Game+.
+- Configurable options and game parameters via [`config/game.yaml`](config/game.yaml).
 - Responsive layout for phones, tablets and desktops, including Safari on iOS and iPadOS.
 - CSS-only animations (they switch off for visitors who prefer reduced motion).
 - End-of-game statistics, with an option to save them as a picture.
@@ -38,9 +38,9 @@ node tests/engine.test.js
 | Path | Purpose |
 |---|---|
 | `index.html`, `css/style.css` | Cover, setup, round and game-over screens |
-| `js/engine.js` | Rules: deck, Punishment, Mercy hand evaluation |
+| `js/engine.js` | Rules: deck, scoring, hand evaluation |
 | `js/app.js` | UI, round flow, "save as picture" |
-| `js/icons.js` | Vector icons for implements, clothing and restraints |
+| `js/icons.js` | Vector icons |
 | `js/yaml.js` | Minimal reader for `config/game.yaml` |
 | `config/game.yaml` | All game parameters |
 | `poster.html` | Standalone v3.3 rules poster |
