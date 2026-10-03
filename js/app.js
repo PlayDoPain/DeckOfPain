@@ -14,6 +14,7 @@
   /* ---------- screens ---------- */
   function show(name) {
     ['cover', 'setup', 'game', 'over'].forEach((n) => ($('screen-' + n).hidden = n !== name));
+    document.body.classList.toggle('game-active', name === 'game');
     window.scrollTo(0, 0);
   }
 
