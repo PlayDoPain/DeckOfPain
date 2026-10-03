@@ -1,18 +1,16 @@
 # Deck of Pain III
 
-A two-role card game for the browser. The app plays **Sir**: it shuffles the deck and draws the cards. **Boy** holds a Hand and can counter with poker-style combinations.
-
-The game is intended for adult players. The site contains only playing cards, rules text and simple icons.
+A browser-based card game. The app deals and scores the cards; players build poker-style hands.
 
 **Play:** `https://playdopain.github.io/DeckOfPain/` (once Pages is enabled)
 
 ## Features
 
-- Rules from the v3.3 (Patch 3) poster: five counter hands (Single, Pair, Flush, Straight, Three of a Kind), wild Joker and New Game+.
-- Configurable options and game parameters via [`config/game.yaml`](config/game.yaml).
+- Poker-style hands (Single, Pair, Flush, Straight, Three of a Kind), a wild Joker and replayable rounds.
+- Game parameters set in [`config/game.yaml`](config/game.yaml).
 - Responsive layout for phones, tablets and desktops, including Safari on iOS and iPadOS.
 - CSS-only animations (they switch off for visitors who prefer reduced motion).
-- End-of-game statistics, with an option to save them as a picture.
+- Summary screen at the end of a game, which can be saved as a picture.
 - **Privacy:** nothing is stored. No cookies, no local storage, no analytics, no server.
 
 ## Run locally
@@ -37,35 +35,22 @@ node tests/engine.test.js
 
 | Path | Purpose |
 |---|---|
-| `index.html`, `css/style.css` | Cover, setup, round and game-over screens |
-| `js/engine.js` | Rules: deck, scoring, hand evaluation |
+| `index.html`, `css/style.css` | Page layout and styling |
+| `js/engine.js` | Deck, scoring, hand evaluation |
 | `js/app.js` | UI, round flow, "save as picture" |
 | `js/icons.js` | Vector icons |
 | `js/yaml.js` | Minimal reader for `config/game.yaml` |
 | `config/game.yaml` | All game parameters |
-| `poster.html` | Standalone v3.3 rules poster |
+| `poster.html` | Standalone rules sheet |
 | `assets/cards/` | Playing-card SVGs, unmodified |
 | `assets/credits/` | Card library authors, license text, changelog, Q&A |
-| `docs/` | Original build spec and rules decisions |
+| `docs/` | Build notes |
 | `tests/` | Engine tests |
 | `.github/workflows/` | CI and GitHub Pages deployment |
 
 ## Deployment
 
 Every push to `main` runs the tests and publishes the site to GitHub Pages through [`.github/workflows/pages.yml`](.github/workflows/pages.yml). Only the files the site needs are published.
-
-## Rules decisions
-
-Where the poster is silent, the app follows these choices. See [`docs/game-spec.md`](docs/game-spec.md) for the original brief.
-
-- The deck is 52 cards plus 2 Jokers. A Joker is worth 10 and is wild in Boy's Hand.
-- Boy's Hand starts with 3 cards and gains 1 per round. Sir draws first, so a nearly empty pile goes to Sir.
-- Boy gets one Mercy counter per round. A Straight Flush offers both options.
-- A Single cannot reduce swats below 0. A Pair is unavailable when the pile is empty.
-- Straights allow Ace low or high, with no wrap-around.
-- Flush: Boy picks the implement from the selected list.
-- Three of a Kind: Boy rewrites the Privilege for the current mode.
-- Played Mercy cards and Sir's cards go to the discard pile. New Game+ reshuffles only the discards, and Boy keeps his Hand.
 
 ## Credits and licenses
 

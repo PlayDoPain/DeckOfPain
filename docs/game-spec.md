@@ -51,3 +51,17 @@ The design brief the app was built from. Kept for reference; the code and `confi
 	- Each mercy with the total times of revoking each.
 	- Total elapsed time (from button to shuffle to end the game).
 - A button to save the session statistics in a picture.
+
+## Rules decisions
+
+Where the poster is silent, the app follows these choices.
+
+- The deck is 52 cards plus 2 Jokers. A Joker is worth 10 and is wild in Boy's Hand.
+- Boy's Hand starts with 3 cards and gains 1 per round. Sir draws first, so a nearly empty pile goes to Sir.
+- Boy gets one Mercy counter per round. A Straight Flush offers both options.
+- A Single cannot reduce swats below 0. A Pair is unavailable when the pile is empty.
+- Straights allow Ace low or high, with no wrap-around.
+- Flush: Boy picks the implement from the selected list.
+- Three of a Kind: Boy rewrites the Privilege for the current mode.
+- Played Mercy cards and Sir's cards go to the discard pile. New Game+ reshuffles only the discards, and Boy keeps his Hand.
+
