@@ -224,10 +224,20 @@ h2,h3{margin:0 0 .5em;}
   body.game-active .credits p{display:inline; margin:0 4px;}
 }
 
-/* Landscape: put the clothing/restraint badges beside the swat count */
+/* Landscape: swat total on the left; badges and Privilege stacked on its right */
 @media (min-width:700px) and (min-height:620px) and (orientation:landscape){
-  body.game-active #p-punish{display:flex; flex-wrap:wrap; align-content:flex-start; align-items:center; justify-content:center; column-gap:18px;}
-  body.game-active #p-punish .ph{width:100%;}
-  body.game-active #p-punish .effects{margin-top:0; flex-direction:column; align-items:flex-start; gap:6px;}
-  body.game-active #p-punish .privilege,body.game-active #p-punish .mercy-line{flex-basis:100%;}
+  body.game-active #p-punish{display:grid; grid-template-columns:auto minmax(0,1fr); column-gap:18px; align-content:start; align-items:center;}
+  body.game-active #p-punish .ph{grid-column:1; grid-row:1;}
+  body.game-active #p-punish .swats{grid-column:1; grid-row:2 / span 2;}
+  body.game-active #p-punish .effects{grid-column:2; grid-row:2; margin-top:0; justify-content:flex-start;}
+  body.game-active #p-punish .privilege{grid-column:2; grid-row:3; margin-top:4px;}
+  body.game-active #p-punish .mercy-line{grid-column:2; grid-row:1; margin:0 0 4px; text-align:left;}
+  body.game-active .hud{padding-bottom:8px;}
+  body.game-active .panels{grid-template-rows:minmax(0,1fr) minmax(0,1.4fr);}
+  body.game-active #p-punish .privilege{padding:4px 10px;}
+  body.game-active #p-punish .mercy-line{font-size:.82rem;}
+}
+@media (min-width:700px) and (min-height:620px){
+  body.game-active .hand.dense .cardbtn{width:min(6.4vh,5.6vw);}
+  body.game-active .hand.denser .cardbtn{width:min(5.2vh,4.6vw);}
 }
