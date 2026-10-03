@@ -1,7 +1,9 @@
 // Plain Node tests for the rules engine (no dependencies): node tests/engine.test.js
 const assert = require('assert');
-global.window = {};
+// The browser scripts attach to window.DOP; make window the Node global so they load unchanged.
+global.window = global;
 require('../js/engine.js');
+require('../js/yaml.js');
 const E = window.DOP.engine;
 
 const deck = E.buildDeck(2);
@@ -28,7 +30,7 @@ assert.strictEqual(mercy('S2', 'H9', 'D13'), '');
 assert.deepStrictEqual(E.punishment([c('S1'), c('H7'), c('D12')]), { swats: 18, faces: 1 });
 assert.deepStrictEqual(E.punishment([c('J1'), c('J2')]), { swats: 20, faces: 2 });
 
-const yaml = (() => { global.window = { DOP: {} }; require('../js/yaml.js'); return window.DOP.parseYaml; })();
+const yaml = window.DOP.parseYaml;
 const cfg = yaml(require('fs').readFileSync(__dirname + '/../config/game.yaml', 'utf8'));
 assert.strictEqual(cfg.MAX_RESTRAINTS, 4);
 assert.strictEqual(cfg.IMPLEMENT_LIST['hair brush'], true);
