@@ -30,6 +30,19 @@ assert.strictEqual(mercy('S2', 'H9', 'D13'), '');
 assert.deepStrictEqual(E.punishment([c('S1'), c('H7'), c('D12')]), { swats: 18, faces: 1 });
 assert.deepStrictEqual(E.punishment([c('J1'), c('J2')]), { swats: 20, faces: 2 });
 
+const ids = (cs) => (cs || []).map((x) => x.id).sort().join(',');
+const best = (hand, key) => ids(E.bestFor(hand.map(c), key));
+assert.strictEqual(best(['S2', 'H10', 'D5'], 'single'), 'H10');
+assert.strictEqual(best(['S2', 'J1', 'D10'], 'single'), 'D10');          // spare the Joker on a tie
+assert.strictEqual(best(['S10', 'H13'], 'single'), 'H13');               // higher rank wins a tie
+assert.strictEqual(best(['S5', 'H5', 'S9', 'H9'], 'pair'), 'H5,S5');     // lowest pair
+assert.strictEqual(best(['S5', 'H7', 'J1'], 'pair'), 'J1,S5');           // Joker only when needed
+assert.strictEqual(best(['S5', 'H6'], 'pair'), '');
+assert.strictEqual(best(['S5', 'H5', 'D5', 'C5'], 'trips'), 'D5,H5,S5');
+assert.strictEqual(best(['S2', 'S9', 'S4', 'S3', 'H13'], 'flush'), 'S2,S3,S4');
+assert.strictEqual(best(['S5', 'H6', 'D7', 'S1', 'H2', 'D3'], 'straight'), 'D3,H2,S1');
+assert.strictEqual(E.bestFor([], 'single'), null);
+
 const yaml = window.DOP.parseYaml;
 const cfg = yaml(require('fs').readFileSync(__dirname + '/../config/game.yaml', 'utf8'));
 assert.strictEqual(cfg.MAX_RESTRAINTS, 4);

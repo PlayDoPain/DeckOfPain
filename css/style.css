@@ -127,6 +127,14 @@ h2,h3{margin:0 0 .5em;}
 #screen-game .center-actions{position:sticky; bottom:0; margin:14px -12px 0; padding:10px 12px calc(10px + var(--safe-b)); background:linear-gradient(to top,var(--bg) 70%,rgba(231,228,222,0));}
 #btn-execute{min-width:min(100%,320px);}
 
+/* ---- quick-pick Mercy buttons ---- */
+.mercy-picks{display:flex; flex-wrap:wrap; gap:4px; margin-top:8px;}
+.pickbtn{flex:1 1 auto; min-width:0; min-height:30px; padding:2px 8px; font-size:.74rem; font-weight:800; border-radius:8px; border:2px solid; white-space:nowrap; transition:background .12s,color .12s;}
+.pickbtn.gray{background:#e6e4e0; border-color:#cfccc6; color:#a19d97; cursor:default;}
+.pickbtn.avail{background:#fff; border-color:var(--mercy); color:var(--mercy);}
+.pickbtn.on{background:var(--mercy); border-color:var(--mercy); color:#fff;}
+.over-date{margin:-6px 0 12px;}
+
 /* ---- game over ---- */
 .over-box h2{font-family:'Anton',Impact,sans-serif; font-weight:400; font-size:2.2rem; text-transform:uppercase; color:var(--punish);}
 .over-box h3{font-family:'Anton',Impact,sans-serif; font-weight:400; letter-spacing:1px; text-transform:uppercase; margin-top:22px;}
@@ -210,6 +218,8 @@ h2,h3{margin:0 0 .5em;}
   /* Boy: hand scrolls on its own; the counter row stays pinned at the bottom */
   body.game-active #p-boy{display:flex; flex-direction:column; overflow:hidden;}
   body.game-active #p-boy .hand{flex:1; min-height:0; overflow-y:auto; align-content:flex-start; -webkit-overflow-scrolling:touch;}
+  body.game-active .mercy-picks{flex:none; margin-top:6px;}
+  body.game-active .pickbtn{min-height:28px;}
   body.game-active .boy-actions{flex:none; display:flex; gap:10px; align-items:stretch; margin-top:6px; padding-top:6px; border-top:1px dashed rgba(14,140,138,.5);}
   body.game-active .boy-actions .mercy-status{flex:1; min-width:0; margin-top:0; justify-content:center; max-height:96px; overflow-y:auto;}
   body.game-active .boy-actions .btn-mercy{width:130px; margin-top:0;}

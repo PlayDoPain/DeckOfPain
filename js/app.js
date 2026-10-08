@@ -148,6 +148,15 @@
     return opts;
   }
 
+  /* For each Mercy: the cards Boy would play, or null when the Hand can't make it. */
+  function mercyPicks() {
+    const out = {};
+    Object.keys(E.MERCY).forEach((k) => {
+      out[k] = (k === 'pair' && (S.pile.length === 0 || S.sir.length === 0)) ? null : E.bestFor(S.hand, k);
+    });
+    return out;
+  }
+
   function applyCounter() {
     const opts = mercyOptions();
     const key = opts[Math.min(S.optIndex, opts.length - 1)];
@@ -268,8 +277,19 @@
     else if (selN === 0) status = `<span class="muted">Select up to ${cfg.MAX_MERCY_CARDS} cards to counter.</span>`;
     else if (!opts.length) status = `<span class="bad">No Mercy with these cards.</span>`;
     else status = opts.map((k, i) => `<label class="opt ${i === Math.min(S.optIndex, opts.length - 1) ? 'on' : ''}"><input type="radio" name="opt" value="${i}" ${i === Math.min(S.optIndex, opts.length - 1) ? 'checked' : ''}><b>${E.MERCY[k].label}</b> — ${E.MERCY[k].effect}</label>`).join('');
+    const picks = mercyPicks();
+    const active = S.sel.size && opts.length ? opts[Math.min(S.optIndex, opts.length - 1)] : null;
+    const pickBtns = Object.keys(E.MERCY).map((k) => {
+      let cls = 'gray', dis = ' disabled';
+      if (!S.counter) {
+        if (active === k) { cls = 'on'; dis = ''; }
+        else if (!active && picks[k]) { cls = 'avail'; dis = ''; }
+      }
+      return `<button type="button" class="pickbtn ${cls}" data-mercy="${k}"${dis} aria-pressed="${active === k}">${E.MERCY[k].label}</button>`;
+    }).join('');
     $('p-boy').innerHTML = `<h3 class="ph">Boy <span class="tag mercy">Hand: ${S.hand.length}</span></h3>
       <div class="cards hand ${S.hand.length > 16 ? 'denser' : S.hand.length > 9 ? 'dense' : ''}">${cards || '<p class="muted">Hand is empty.</p>'}</div>
+      <div class="mercy-picks" aria-label="Quick-select a Mercy">${pickBtns}</div>
       <div class="boy-actions"><div class="mercy-status">${status}</div>
       <button type="button" class="btn btn-mercy" id="btn-counter" ${(!opts.length || S.counter) ? 'disabled' : ''}>Counter</button></div>`;
     S.newHand = new Set();
@@ -287,9 +307,10 @@
     closeModal();
     const st = S.stats, elapsed = Date.now() - S.start;
     S.elapsed = elapsed;
+    S.endDate = new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
     const impl = Object.keys(st.implSwats).sort((a, b) => st.implSwats[b] - st.implSwats[a]);
     const mercyKeys = Object.keys(E.MERCY);
-    $('over-box').innerHTML = `<h2>Game over</h2>
+    $('over-box').innerHTML = `<h2>Game over</h2><p class="muted over-date">${esc(S.endDate)}</p>
       <div class="big-stats">
         <div><b>${S.game}</b><span>Games</span></div><div><b>${st.rounds}</b><span>Rounds</span></div>
         <div><b>${st.swats}</b><span>Total swats</span></div><div><b>${st.clothes}</b><span>Clothing removed</span></div>
@@ -306,8 +327,8 @@
   async function savePicture() {
     const st = S.stats;
     const impl = Object.keys(st.implSwats).sort((a, b) => st.implSwats[b] - st.implSwats[a]);
-    const W = 1080, rowH = 90;
-    const H = 520 + Math.max(1, impl.length) * rowH + 360;
+    const W = 1080, rowH = 90, o = 34; // o: room for the date line
+    const H = 520 + o + Math.max(1, impl.length) * rowH + 250;
     const cv = document.createElement('canvas');
     cv.width = W; cv.height = H;
     const g = cv.getContext('2d');
@@ -324,10 +345,12 @@
     g.fillStyle = '#0E8C8A'; g.fillText(t3, x + w[0] + w[1], 130);
     g.textAlign = 'center'; g.fillStyle = '#6E6A66'; g.font = '700 26px Inter, sans-serif';
     g.fillText('BY U/PLAYDOPAIN', W / 2, 175);
+    g.fillStyle = '#141414'; g.font = '600 26px "IBM Plex Mono", monospace';
+    g.fillText(S.endDate, W / 2, 175 + o);
 
     const cells = [[S.game, 'Games'], [st.rounds, 'Rounds'], [st.swats, 'Total swats'], [st.clothes, 'Clothing removed'], [st.restraints, 'Restraints added'], [E.fmtTime(S.elapsed), 'Elapsed']];
     cells.forEach((c, i) => {
-      const cx = 40 + (i % 3) * 335, cy = 215 + Math.floor(i / 3) * 135;
+      const cx = 40 + (i % 3) * 335, cy = 215 + o + Math.floor(i / 3) * 135;
       g.fillStyle = '#fff'; g.strokeStyle = '#141414'; g.lineWidth = 3;
       g.fillRect(cx, cy, 320, 115); g.strokeRect(cx, cy, 320, 115);
       g.fillStyle = '#DF1430'; g.font = '56px Anton, Impact, sans-serif'; g.textAlign = 'center';
@@ -335,7 +358,7 @@
       g.fillStyle = '#6E6A66'; g.font = '700 22px Inter, sans-serif'; g.fillText(c[1].toUpperCase(), cx + 160, cy + 100);
     });
 
-    let y = 520;
+    let y = 520 + o;
     g.textAlign = 'left'; g.fillStyle = '#141414'; g.font = '40px Anton, Impact, sans-serif';
     g.fillText('SWATS BY IMPLEMENT', 40, y); y += 20;
     if (!impl.length) { g.font = '600 28px "IBM Plex Mono", monospace'; g.fillStyle = '#6E6A66'; g.fillText('No rounds played.', 40, y + 55); y += rowH; }
@@ -357,9 +380,6 @@
       g.textAlign = 'center'; g.fillStyle = '#0E8C8A'; g.font = '48px Anton, Impact, sans-serif'; g.fillText(String(st.mercies[k] || 0), 135 + i * 200, y + 55);
       g.fillStyle = '#141414'; g.font = '700 20px Inter, sans-serif'; g.fillText(E.MERCY[k].label, 135 + i * 200, y + 86);
     });
-    y += 150;
-    g.fillStyle = '#6E6A66'; g.font = '600 18px "IBM Plex Mono", monospace'; g.textAlign = 'center';
-    g.fillText('Cards: Vector Playing Cards 3.2 by Chris Aguilar, totalnonsense.com (LGPL 3.0)', W / 2, H - 40);
 
     cv.toBlob((blob) => {
       const url = URL.createObjectURL(blob);
@@ -399,6 +419,18 @@
         if (S.sel.has(id)) S.sel.delete(id);
         else if (S.sel.size < cfg.MAX_MERCY_CARDS) S.sel.add(id);
         S.optIndex = 0; renderBoy(); return;
+      }
+      const pick = e.target.closest('[data-mercy]');
+      if (pick && !S.counter) {
+        const key = pick.dataset.mercy, opts = mercyOptions();
+        if (S.sel.size && opts[Math.min(S.optIndex, opts.length - 1)] === key) { S.sel.clear(); S.optIndex = 0; }
+        else {
+          const cards = mercyPicks()[key];
+          if (!cards) return;
+          S.sel = new Set(cards.map((c) => c.id));
+          S.optIndex = Math.max(0, mercyOptions().indexOf(key));
+        }
+        renderBoy(); return;
       }
       if (e.target.closest('#btn-counter')) applyCounter();
     });

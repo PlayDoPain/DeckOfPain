@@ -79,6 +79,36 @@ DOP.engine = (function () {
     return out;
   }
 
+  /* Cards in `hand` that Boy would play for Mercy `key`, or null if none.
+     Single: the highest-value card (spare Jokers if tied). Others: the lowest total value, then fewest Jokers. */
+  function bestFor(hand, key) {
+    if (!hand.length) return null;
+    if (key === 'single') {
+      let best = null;
+      hand.forEach((c) => {
+        const better = !best || value(c) > value(best) ||
+          (value(c) === value(best) && ((isJoker(best) && !isJoker(c)) || (!isJoker(c) && !isJoker(best) && c.rank > best.rank)));
+        if (better) best = c;
+      });
+      return [best];
+    }
+    let best = null, bestScore = null;
+    const score = (cs) => [cs.reduce((a, c) => a + value(c), 0), cs.filter(isJoker).length];
+    const consider = (cs) => {
+      if (!evaluate(cs).includes(key)) return;
+      const sc = score(cs);
+      if (!best || sc[0] < bestScore[0] || (sc[0] === bestScore[0] && sc[1] < bestScore[1])) { best = cs; bestScore = sc; }
+    };
+    const n = hand.length;
+    for (let a = 0; a < n; a++) {
+      for (let b = a + 1; b < n; b++) {
+        if (key === 'pair') { consider([hand[a], hand[b]]); continue; }
+        for (let c = b + 1; c < n; c++) consider([hand[a], hand[b], hand[c]]);
+      }
+    }
+    return best;
+  }
+
   function fmtTime(ms) {
     const s = Math.floor(ms / 1000);
     const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
@@ -86,5 +116,5 @@ DOP.engine = (function () {
     return h ? `${h}:${mm}:${ss}` : `${mm}:${ss}`;
   }
 
-  return { MERCY, SUIT_SYMBOL, buildDeck, shuffle, isJoker, isFace, value, cardName, punishment, evaluate, fmtTime };
+  return { MERCY, SUIT_SYMBOL, buildDeck, shuffle, isJoker, isFace, value, cardName, punishment, evaluate, bestFor, fmtTime };
 })();
