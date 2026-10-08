@@ -67,6 +67,7 @@
         <div class="stat"><span class="stat-label">Intensity</span><span class="stat-val" id="st-intensity">3</span></div>
         <div class="stat"><span class="stat-label">Clothes off</span><span class="stat-val" id="st-clothes">0</span></div>
         <div class="stat"><span class="stat-label">Restraints</span><span class="stat-val" id="st-restraints">0</span></div>
+        <div class="stat stat-pile"><span class="stat-label">Pile</span><span class="stat-val" id="st-pile">54</span></div>
       </div>
       <div class="deck3d" id="deck3d" title="Cards left in the Drawing Pile">
         <div class="deck-stack" id="deck-stack"></div>
@@ -82,10 +83,14 @@
     </div>
 
     <div class="panels">
-      <div class="panel" id="p-implement"></div>
-      <div class="panel" id="p-punish"></div>
-      <div class="panel" id="p-sir"></div>
-      <div class="panel" id="p-boy"></div>
+      <div class="group sir-group">
+        <div class="panel" id="p-implement"></div>
+        <div class="panel" id="p-punish"></div>
+        <div class="panel" id="p-sir"></div>
+      </div>
+      <div class="group boy-group">
+        <div class="panel" id="p-boy"></div>
+      </div>
     </div>
     <div class="center-actions">
       <button class="btn btn-primary btn-big" id="btn-execute" type="button">Execute</button>
@@ -106,6 +111,8 @@
   <p>Game by <b>u/PlayDoPain</b>. Playing cards: <a href="https://totalnonsense.com/open-source-vector-playing-cards/" target="_blank" rel="noopener">Vector Playing Cards 3.2</a> by <b>Chris Aguilar</b> (totalnonsense.com), licensed under <a href="https://www.gnu.org/licenses/lgpl-3.0.html" target="_blank" rel="noopener">LGPL 3.0</a>. Cards are used unmodified.</p>
   <p><a href="assets/credits/AUTHORS.txt">Authors</a> · <a href="assets/credits/LGPL%203.0%20-%20LICENSING%20INFORMATION.txt">License text</a> · <a href="poster.html" target="_blank" rel="noopener">Rules poster</a></p>
 </footer>
+
+<div id="rotate" class="rotate" aria-hidden="true"><div class="rotate-icon"></div><p>Please turn your phone upright.<br>This game is played in portrait.</p></div>
 
 <div id="modal" class="modal" hidden><div class="modal-box" role="dialog" aria-modal="true"><div id="modal-body"></div><div class="modal-actions" id="modal-actions"></div></div></div>
 

@@ -216,6 +216,7 @@
     $('st-intensity').textContent = S.intensity;
     $('st-clothes').textContent = S.clothes;
     $('st-restraints').textContent = `${S.restraints}/${cfg.MAX_RESTRAINTS}`;
+    $('st-pile').textContent = S.pile.length;
     $('mode-clothed').classList.toggle('on', S.mode === 'clothed');
     $('mode-restrained').classList.toggle('on', S.mode === 'restrained');
     $('mode-clothed').setAttribute('aria-pressed', S.mode === 'clothed');
@@ -224,6 +225,7 @@
 
   function renderImplement() {
     const el = $('p-implement');
+    el.parentElement.classList.toggle('picking', S.pickImpl);
     if (S.pickImpl) {
       el.innerHTML = `<h3 class="ph">Implement <span class="tag mercy">Flush: Boy chooses</span></h3>
         <div class="impl-pick">${S.implements.map((n) => `<button type="button" class="tile mini" data-pick="${esc(n)}"><span class="tile-icon">${I.implement(n)}</span><span class="tile-name">${esc(titleCase(n))}</span></button>`).join('')}</div>`;
@@ -273,7 +275,7 @@
     const opts = mercyOptions();
     const selN = S.sel.size;
     let status;
-    if (S.counter) status = `<span class="muted">Mercy already played this round.</span>`;
+    if (S.counter) status = `<span class="muted">Played <b>${E.MERCY[S.counter.key].label}</b>: ${E.MERCY[S.counter.key].effect}</span>`;
     else if (selN === 0) status = `<span class="muted">Select up to ${cfg.MAX_MERCY_CARDS} cards to counter.</span>`;
     else if (!opts.length) status = `<span class="bad">No Mercy with these cards.</span>`;
     else status = opts.map((k, i) => `<label class="opt ${i === Math.min(S.optIndex, opts.length - 1) ? 'on' : ''}"><input type="radio" name="opt" value="${i}" ${i === Math.min(S.optIndex, opts.length - 1) ? 'checked' : ''}><b>${E.MERCY[k].label}</b> — ${E.MERCY[k].effect}</label>`).join('');
