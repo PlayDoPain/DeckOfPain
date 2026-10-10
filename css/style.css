@@ -461,8 +461,13 @@ body.mode-duo .boards.duo .p-sir .cardwrap{flex:0 1 84px;}
 body.mode-duo .boards.duo .p-boy .cardbtn,body.mode-duo .boards.duo .p-boy .hand.dense .cardbtn,body.mode-duo .boards.duo .p-boy .hand.denser .cardbtn{width:calc((100% - 30px) / 6);}
 body.mode-duo .boards.duo .swat-num{font-size:58px;}
 body.mode-duo .boards.duo .impl-icon{width:48px; height:48px;}
-body.mode-duo .boards.duo.compact .p-sir .cardwrap{flex:0 1 54px;}
-body.mode-duo .boards.duo.compact .p-boy .cardbtn,body.mode-duo .boards.duo.compact .p-boy .hand.dense .cardbtn,body.mode-duo .boards.duo.compact .p-boy .hand.denser .cardbtn{width:calc((100% - 30px) / 7);}
+body.mode-duo .boards.duo.compact .p-sir{display:block;}
+body.mode-duo .boards.duo.compact .p-sir .ph{flex-direction:row; align-items:center; gap:8px; margin:0 0 3px; font-size:.95rem;}
+body.mode-duo .boards.duo.compact .p-sir .ph .tag{font-size:.72rem; padding:2px 9px; margin:0;}
+body.mode-duo .boards.duo.compact .p-sir .cards{justify-content:center;}
+body.mode-duo .boards.duo.compact .p-sir .cardwrap{flex:0 1 48px;}
+body.mode-duo .boards.duo.compact .p-boy .cardbtn,body.mode-duo .boards.duo.compact .p-boy .hand.dense .cardbtn,body.mode-duo .boards.duo.compact .p-boy .hand.denser .cardbtn{width:calc((100% - 35px) / 8);}
+body.mode-duo .boards.duo.compact .p-boy .hand{gap:5px; padding-top:10px;}
 body.mode-duo .boards.duo.compact .swat-num{font-size:42px;}
 body.mode-duo .boards.duo.compact .impl-icon{width:30px; height:30px;}
 body.mode-duo .boards.duo .act-btns .btn{width:92px; font-size:.78rem;}
