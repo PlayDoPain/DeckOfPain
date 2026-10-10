@@ -418,6 +418,13 @@
   /* Two players: each stat also shows every player's own share, in that player's color. */
   const subsHtml = (get) => (S.duo ? `<span class="subs">${S.players.map((p) => `<i class="sub pc${p.i}">${esc(p.name)} ${get(p)}</i>`).join('')}</span>` : '');
 
+  /* The five Mercy hands, plus (two players) how many Mercies were transferred to the other Boy. */
+  const mercyRows = (t) => {
+    const rows = Object.keys(E.MERCY).map((k) => ({ label: E.MERCY[k].label, total: t.mercies[k] || 0, get: (p) => p.stats.mercies[k] || 0 }));
+    if (S.duo) rows.push({ label: 'Transfer', total: t.transfers, get: (p) => p.stats.transfers });
+    return rows;
+  };
+
   function gameOver() {
     closeModal();
     const t = statSum(), elapsed = Date.now() - S.start;
@@ -429,13 +436,13 @@
       <div class="big-stats">
         ${tile(S.game, 'Games')}${tile(S.rounds, 'Rounds')}
         ${tile(t.swats, 'Total swats', (p) => p.stats.swats)}${tile(t.clothes, 'Clothing removed', (p) => p.stats.clothes)}
-        ${tile(t.restraints, 'Restraints added', (p) => p.stats.restraints)}${S.duo ? tile(t.transfers, 'Mercy transferred', (p) => p.stats.transfers) : ''}
+        ${tile(t.restraints, 'Restraints added', (p) => p.stats.restraints)}
         ${tile(E.fmtTime(elapsed), 'Elapsed')}
       </div>
       <h3>Swats by implement</h3>
       <div class="impl-stats">${impl.length ? impl.map((n) => `<div class="istat"><span class="tile-icon">${I.implement(n)}</span><span class="iname">${esc(titleCase(n))}${subsHtml((p) => p.stats.implSwats[n] || 0)}</span><b>${t.implSwats[n]}</b></div>`).join('') : '<p class="muted">No rounds were played.</p>'}</div>
       <h3>Mercy invoked</h3>
-      <div class="mercy-stats">${Object.keys(E.MERCY).map((k) => `<div class="mstat"><span>${E.MERCY[k].label}</span><b>${t.mercies[k] || 0}</b>${subsHtml((p) => p.stats.mercies[k] || 0)}</div>`).join('')}</div>`;
+      <div class="mercy-stats">${mercyRows(t).map((m) => `<div class="mstat"><span>${m.label}</span><b>${m.total}</b>${subsHtml(m.get)}</div>`).join('')}</div>`;
     show('over');
   }
 
@@ -444,7 +451,7 @@
     const t = statSum(), duo = S.duo, W = 1080, o = 34, rowH = duo ? 100 : 90;
     const col = (i) => getComputedStyle(document.documentElement).getPropertyValue(i ? '--p1' : '--p0').trim();
     const impl = sortedImpl(t.implSwats);
-    const cols = duo ? 4 : 3, cellH = duo ? 150 : 115, nT = duo ? 7 : 6, rowsT = Math.ceil(nT / cols);
+    const cols = 3, cellH = duo ? 150 : 115, nT = 6, rowsT = Math.ceil(nT / cols);
     const yImpl = 215 + o + rowsT * (cellH + 20) + 40;
     const yMercy = yImpl + 20 + Math.max(1, impl.length) * rowH + 50;
     const mercyH = duo ? 140 : 100;
@@ -496,7 +503,6 @@
     const per = (get) => S.players.map(get);
     const tiles = [[S.game, 'Games'], [S.rounds, 'Rounds'], [t.swats, 'Total swats', per((p) => p.stats.swats)], [t.clothes, 'Clothing removed', per((p) => p.stats.clothes)],
       [t.restraints, 'Restraints added', per((p) => p.stats.restraints)]];
-    if (duo) tiles.push([t.transfers, 'Mercy transferred', per((p) => p.stats.transfers)]);
     tiles.push([E.fmtTime(S.elapsed), 'Elapsed']);
     const cw = (W - 80 - (cols - 1) * 15) / cols;
     tiles.forEach((c, i) => cell(40 + (i % cols) * (cw + 15), 215 + o + Math.floor(i / cols) * (cellH + 20), cw, cellH, c[0], c[1], 56, c[2]));
@@ -515,19 +521,19 @@
     }
     y = yMercy;
     g.textAlign = 'left'; g.fillStyle = '#141414'; g.font = '40px Anton, Impact, sans-serif'; g.fillText('MERCY INVOKED', 40, y); y += 30;
-    const keys = Object.keys(E.MERCY), bw = (W - 80 - (keys.length - 1) * 8) / keys.length;
-    keys.forEach((k, i) => {
+    const mrows = mercyRows(t), bw = (W - 80 - (mrows.length - 1) * 8) / mrows.length;
+    mrows.forEach((m, i) => {
       const bx = 40 + i * (bw + 8);
       g.fillStyle = '#EAF6F5'; g.fillRect(bx, y, bw, mercyH); g.strokeStyle = '#0E8C8A'; g.lineWidth = 3; g.strokeRect(bx, y, bw, mercyH);
-      g.textAlign = 'center'; g.fillStyle = '#0E8C8A'; g.font = '48px Anton, Impact, sans-serif'; g.fillText(String(t.mercies[k] || 0), bx + bw / 2, y + 52);
+      g.textAlign = 'center'; g.fillStyle = '#0E8C8A'; g.font = '48px Anton, Impact, sans-serif'; g.fillText(String(m.total), bx + bw / 2, y + 52);
       if (duo) {
         // one chip per line so five boxes stay narrow enough
         S.players.forEach((p, pi) => {
           g.fillStyle = col(pi); roundRect(bx + 8, y + 62 + pi * 28, bw - 16, 24, 6); g.fill();
-          g.fillStyle = '#fff'; g.font = '700 15px Inter, sans-serif'; g.textAlign = 'center'; g.fillText(`${p.name} ${p.stats.mercies[k] || 0}`, bx + bw / 2, y + 79 + pi * 28);
+          g.fillStyle = '#fff'; g.font = '700 15px Inter, sans-serif'; g.textAlign = 'center'; g.fillText(`${p.name} ${m.get(p)}`, bx + bw / 2, y + 79 + pi * 28);
         });
       }
-      g.fillStyle = '#141414'; g.font = '700 18px Inter, sans-serif'; g.textAlign = 'center'; g.fillText(E.MERCY[k].label.toUpperCase(), bx + bw / 2, y + mercyH - 8);
+      g.fillStyle = '#141414'; g.font = '700 18px Inter, sans-serif'; g.textAlign = 'center'; g.fillText(m.label.toUpperCase(), bx + bw / 2, y + mercyH - 8);
     });
 
     cv.toBlob((blob) => download(blob, 'deck-of-pain-session.png'), 'image/png');
