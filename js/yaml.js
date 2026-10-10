@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: Apache-2.0
+   Copyright 2026 PlayDoPain (u/PlayDoPain). See NOTICE. */
 /* Minimal YAML reader: nested maps, scalars (yes/no/true/false/numbers/strings), # comments.
    Enough for config/game.yaml; not a general YAML parser. */
 window.DOP = window.DOP || {};

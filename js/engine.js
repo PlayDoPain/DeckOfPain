@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: Apache-2.0
+   Copyright 2026 PlayDoPain (u/PlayDoPain). See NOTICE. */
 /* Deck of Pain III - rules engine (no DOM). Rules follow poster v3.3 (Patch 3). */
 window.DOP = window.DOP || {};
 DOP.engine = (function () {
@@ -14,15 +16,19 @@ DOP.engine = (function () {
     trips:    { label: '3 of a Kind', effect: 'Revise Privilege' },
   };
 
-  function buildDeck(jokers) {
+  /* decks > 1 prefixes ids ("2:S5") so duplicate cards stay distinct; deck 1 keeps plain ids. */
+  function buildDeck(jokers, decks = 1) {
     const deck = [];
-    Object.keys(SUIT_NAME).forEach((s) => {
-      for (let r = 1; r <= 13; r++) {
-        const face = FACE_NAME[r] ? '-' + FACE_NAME[r] : '';
-        deck.push({ id: s + r, suit: s, rank: r, file: `${SUIT_NAME[s]}-${r}${face}.svg` });
-      }
-    });
-    for (let j = 1; j <= jokers; j++) deck.push({ id: 'J' + j, suit: 'J', rank: 0, file: `JOKER-${j}.svg` });
+    for (let d = 1; d <= decks; d++) {
+      const pre = d === 1 ? '' : d + ':';
+      Object.keys(SUIT_NAME).forEach((s) => {
+        for (let r = 1; r <= 13; r++) {
+          const face = FACE_NAME[r] ? '-' + FACE_NAME[r] : '';
+          deck.push({ id: pre + s + r, suit: s, rank: r, file: `${SUIT_NAME[s]}-${r}${face}.svg` });
+        }
+      });
+      for (let j = 1; j <= jokers; j++) deck.push({ id: pre + 'J' + j, suit: 'J', rank: 0, file: `JOKER-${j}.svg` });
+    }
     return deck;
   }
 

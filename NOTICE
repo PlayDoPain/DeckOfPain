@@ -1,0 +1,21 @@
+Deck of Pain III
+Copyright 2026 PlayDoPain (u/PlayDoPain)
+
+Game design, rules, text, icon artwork, and software by u/PlayDoPain.
+
+This product includes software developed by u/PlayDoPain
+(https://github.com/PlayDoPain/DeckOfPain). Redistributions of the source
+code, and of modified versions, must retain this NOTICE file and the
+copyright notices in the source files.
+
+Third-party material (not covered by the licenses above):
+
+  Playing card artwork (assets/cards/)
+    "Vector Playing Cards 3.2" by Chris Aguilar
+    https://totalnonsense.com/open-source-vector-playing-cards/
+    Licensed under the GNU Lesser General Public License v3.0
+    (see assets/credits/). Used unmodified. Chris Aguilar is not the author
+    of Deck of Pain and has not endorsed it.
+
+  html2canvas 1.4.1 (vendor/html2canvas.min.js)
+    Copyright (c) 2022 Niklas von Hertzen, MIT License.

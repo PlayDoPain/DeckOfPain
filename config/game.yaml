@@ -1,4 +1,4 @@
-# Deck of Pain III - game parameters
+# Deck of Pain III (v3.4, Patch 4) - game parameters
 # Edit this file to change defaults; the app reads it on load.
 
 # Implements shown on the setup page. yes = pre-selected by default.
@@ -15,22 +15,30 @@ IMPLEMENT_LIST:
   ping pong paddle: yes
   ruler: yes
 
-# Most restraints that can be added over the whole session.
-MAX_RESTRAINTS: 4
-
-# Deck: 52 cards plus this many Jokers.
+# Jokers per deck (a deck is 52 cards plus this many Jokers).
 JOKERS: 2
 
-# Sir draws this many cards in the first game (+1 per New Game+).
+# Decks in the Drawing Pile. Two players use two decks (108 cards) so a
+# session lasts about as many rounds as a one-player game.
+DECKS_SOLO: 1
+DECKS_DUO: 2
+
+# Sir draws this many cards per Boy in the first game (+1 per New Game+).
 STARTING_INTENSITY: 3
 
-# Boy's Hand starts with this many cards, then gains 1 per round.
+# Each Boy's Hand starts with this many cards, then gains 1 per round.
 BOY_STARTING_HAND: 3
 BOY_CARDS_PER_ROUND: 1
 
-# Most cards Boy may play in a single Mercy counter.
+# Most cards a Boy may play in a single Mercy counter.
 MAX_MERCY_CARDS: 3
 
-# Default Privilege text on the setup page.
+# Default Privilege text on the setup page (one pair per Boy).
 DEFAULT_PRIVILEGE_CLOTHED: Get a rub
 DEFAULT_PRIVILEGE_RESTRAINED: Get a rub
+
+# Two-player (duo) mode: default Boy names, and the smallest landscape width
+# (in CSS pixels) at which duo mode may be started.
+DUO_NAME_1: A
+DUO_NAME_2: B
+DUO_MIN_WIDTH: 900

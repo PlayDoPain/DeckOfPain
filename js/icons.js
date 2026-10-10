@@ -1,4 +1,6 @@
-/* Vector icons (64x64, drawn for this project). Colour comes from currentColor;
+/* SPDX-License-Identifier: Apache-2.0
+   Copyright 2026 PlayDoPain (u/PlayDoPain). See NOTICE. */
+/* Vector icons (64x64, drawn for this project). Color comes from currentColor;
    .cut parts punch through to the panel background. */
 window.DOP = window.DOP || {};
 DOP.icons = (function () {

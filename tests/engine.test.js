@@ -12,6 +12,10 @@ const mercy = (...ids) => E.evaluate(ids.map(c)).join(',');
 
 assert.strictEqual(deck.length, 54);
 assert.strictEqual(new Set(deck.map((x) => x.file)).size, 54);
+const two = E.buildDeck(2, 2);
+assert.strictEqual(two.length, 108);
+assert.strictEqual(new Set(two.map((x) => x.id)).size, 108);   // duplicates stay distinct
+assert.strictEqual(two.filter((x) => x.suit === 'J').length, 4);
 
 assert.strictEqual(mercy('S5'), 'single');
 assert.strictEqual(mercy('S5', 'H5'), 'pair');
@@ -45,7 +49,9 @@ assert.strictEqual(E.bestFor([], 'single'), null);
 
 const yaml = window.DOP.parseYaml;
 const cfg = yaml(require('fs').readFileSync(__dirname + '/../config/game.yaml', 'utf8'));
-assert.strictEqual(cfg.MAX_RESTRAINTS, 4);
+assert.strictEqual(cfg.MAX_RESTRAINTS, undefined);   // restraint cap was removed in v3.4
+assert.strictEqual(cfg.DECKS_DUO, 2);
+assert.strictEqual(cfg.DUO_NAME_1, 'A');
 assert.strictEqual(cfg.IMPLEMENT_LIST['hair brush'], true);
 assert.strictEqual(cfg.IMPLEMENT_LIST['crop'], false);
 
