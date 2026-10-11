@@ -585,7 +585,7 @@
     g.textAlign = 'left'; g.fillStyle = '#141414'; g.font = '40px Anton, Impact, sans-serif'; g.fillText('PRIVILEGES', 40, yPriv);
     let py = yPriv + 20;
     privLayout.forEach((L) => {
-      const c = L.k === 'clothed' ? '#141414' : '#7A2E8C', bx = 40, bw = W - 80;
+      const c = '#0E8C8A', bx = 40, bw = W - 80;
       g.fillStyle = '#fff'; g.fillRect(bx, py, bw, L.h); g.strokeStyle = c; g.lineWidth = 4; g.strokeRect(bx, py, bw, L.h);
       g.fillStyle = c; g.fillRect(bx, py, bw, 54);
       g.fillStyle = '#fff'; g.font = '36px Anton, Impact, sans-serif'; g.textAlign = 'left'; g.fillText(L.label.toUpperCase(), bx + 16, py + 40);

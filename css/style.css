@@ -256,10 +256,8 @@ body.mode-duo .solo-only{display:none;}
 
 /* privileges on the stats screen: one block per state, each Boy's history inside */
 .priv-stats{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
-.pv{border:3px solid var(--ink); border-radius:12px; background:#fff; overflow:hidden; padding:0 12px 6px;}
-.pv.restrained{border-color:var(--clothes);}
-.pv h4{margin:0 -12px 6px; padding:6px 12px; background:var(--ink); color:#fff; font-family:'Anton',Impact,sans-serif; font-weight:400; font-size:1.4rem; letter-spacing:1px;}
-.pv.restrained h4{background:var(--clothes);}
+.pv{border:3px solid var(--mercy); border-radius:12px; background:#fff; overflow:hidden; padding:0 12px 6px;}
+.pv h4{margin:0 -12px 6px; padding:6px 12px; background:var(--mercy); color:#fff; font-family:'Anton',Impact,sans-serif; font-weight:400; font-size:1.4rem; letter-spacing:1px;}
 .pv-row{display:flex; align-items:flex-start; gap:10px; padding:6px 0; border-bottom:1px solid rgba(0,0,0,.1);}
 .pv-row:last-child{border-bottom:0;}
 .pv-who{flex:0 0 auto; min-width:4.6em; text-align:center; font-size:.78rem; font-weight:800; letter-spacing:.3px; color:#fff; background:var(--pc); border-radius:7px; padding:2px 8px;}
