@@ -29,12 +29,15 @@ How the app is specified and the choices made along the way (v3.4, Patch 4). The
 ### Game over
 - Per-item totals with icons, plus totals for games, rounds, items removed, and items added.
 - Number of times each combination was played, plus (two players) a Transfer tile counting Mercies passed to the other Boy. The six top tiles stay the same for one or two players.
+- Privileges: one block for Clothed and one for Restrained. Inside each, every Boy's history of that Privilege, from his starting text through each Three of a Kind rewrite to what he ended with (Boy 1 above Boy 2). The picture includes them too.
 - Elapsed time from the first shuffle to the end of the game.
 - Two players: the same stats; every stat that belongs to a player also shows each player's share in his color.
 - A button saves the summary, with the date, as a picture.
 
 ### Cover image
 A button on the how-to-play panel saves the whole cover (title, sample round, and credits) as one long PNG, using the bundled html2canvas.
+
+The footer shows "Last updated" with the date and time of the last deploy (stamped by the workflow; hidden on a local copy).
 
 Nothing is stored: no cookies, local storage, or server.
 

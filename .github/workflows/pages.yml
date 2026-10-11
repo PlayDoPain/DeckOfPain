@@ -39,6 +39,8 @@ jobs:
           cp LICENSE _site/LICENSE.txt
           cp NOTICE _site/NOTICE.txt
           cp LICENSE-CONTENT-CC-BY-4.0.txt _site/
+          # stamp the "last updated" time (the commit being deployed) into the page
+          sed -i "s|__BUILD_TIME__|$(git log -1 --format=%cI)|" _site/index.html
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with:

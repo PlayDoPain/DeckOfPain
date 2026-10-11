@@ -103,6 +103,7 @@
       state: 'clothed', hand: [], sir: [], implement: null, pickImpl: false,
       sel: new Set(), optIndex: 0, acted: null, reduce: 0, mercyLog: [], privs: [], pickBy: null,
       clothes: 0, restraints: 0, newSir: false, newHand: new Set(), lastSwats: undefined,
+      privOrig: null, privRevs: [],
       stats: { swats: 0, clothes: 0, restraints: 0, implSwats: {}, mercies: {}, transfers: 0 },
     };
   }
@@ -116,6 +117,7 @@
       pile: deck, discard: [], start: Date.now(), players: [],
     };
     for (let i = 0; i < (duo ? 2 : 1); i++) S.players.push(makePlayer(i, duo));
+    S.players.forEach((p) => { p.privOrig = { ...p.privilege }; });
     S.players.forEach((p) => { p.hand = S.pile.splice(0, cfg.BOY_STARTING_HAND); p.newHand = new Set(p.hand.map((c) => c.id)); });
     S.players.forEach((p) => { dealSir(p); pickImplement(p); });
     pickPriority();
@@ -229,7 +231,9 @@
     if (key === 'single') { log.reduce = E.value(cards[0]); t.reduce += log.reduce; }
     else if (key === 'pair') { S.discard.push(...t.sir); dealSir(t); }
     else if (key === 'flush') { t.pickImpl = true; t.pickBy = p.i; } // the Boy who played it picks
-    else { t.privs.push({ from: p.i }); } // straight / three of a kind: the giver's own Privilege
+    else { // straight / three of a kind: the giver's own Privilege
+      t.privs.push({ from: p.i });
+    }
     t.mercyLog.push(log);
     renderGame();
     if (key === 'trips') reviseDialog(p, t);
@@ -244,7 +248,10 @@
       { label: 'Keep as is' },
       { label: 'Save', cls: 'btn-primary', onClick: () => {
         const v = $('revise-input').value.trim();
-        if (v) src.privilege[k] = v;
+        if (v && v !== src.privilege[k]) {
+          src.privRevs.push({ state: k, to: v });
+          src.privilege[k] = v;
+        }
         renderGame();
       } },
     ]);
@@ -425,6 +432,18 @@
     return rows;
   };
 
+  /* Privileges at the end of the game, grouped by state and then by Boy. Each Boy's history is his
+     starting text followed by every Three of a Kind rewrite; the last one is what he ended with. */
+  const PRIV_STATES = [['clothed', 'Clothed'], ['restrained', 'Restrained']];
+  const privChain = (p, k) => [p.privOrig[k], ...p.privRevs.filter((r) => r.state === k).map((r) => r.to)];
+  function privBlocks() {
+    return PRIV_STATES.map(([k, label]) => `<div class="pv ${k}"><h4>${label}</h4>${S.players.map((p) => {
+      const ch = privChain(p, k);
+      const steps = ch.map((tx, i) => `<span class="${i === ch.length - 1 ? 'pv-now' : 'pv-step'}">${esc(tx)}</span>`).join('<span class="pv-arrow">→</span>');
+      return `<div class="pv-row">${S.duo ? `<span class="pv-who pc${p.i}">${esc(p.name)}</span>` : ''}<span class="pv-chain">${steps}</span></div>`;
+    }).join('')}</div>`).join('');
+  }
+
   function gameOver() {
     closeModal();
     const t = statSum(), elapsed = Date.now() - S.start;
@@ -442,7 +461,9 @@
       <h3>Swats by implement</h3>
       <div class="impl-stats">${impl.length ? impl.map((n) => `<div class="istat"><span class="tile-icon">${I.implement(n)}</span><span class="iname">${esc(titleCase(n))}${subsHtml((p) => p.stats.implSwats[n] || 0)}</span><b>${t.implSwats[n]}</b></div>`).join('') : '<p class="muted">No rounds were played.</p>'}</div>
       <h3>Mercy invoked</h3>
-      <div class="mercy-stats">${mercyRows(t).map((m) => `<div class="mstat"><span>${m.label}</span><b>${m.total}</b>${subsHtml(m.get)}</div>`).join('')}</div>`;
+      <div class="mercy-stats">${mercyRows(t).map((m) => `<div class="mstat"><span>${m.label}</span><b>${m.total}</b>${subsHtml(m.get)}</div>`).join('')}</div>
+      <h3>Privileges</h3>
+      <div class="priv-stats">${privBlocks()}</div>`;
     show('over');
   }
 
@@ -455,11 +476,35 @@
     const yImpl = 215 + o + rowsT * (cellH + 20) + 40;
     const yMercy = yImpl + 20 + Math.max(1, impl.length) * rowH + 50;
     const mercyH = duo ? 140 : 100;
-    const H = yMercy + 30 + mercyH + 50;
+    try { await Promise.all(['64px Anton', '600 28px "IBM Plex Mono"', '700 30px Inter', '600 22px Inter'].map((f) => document.fonts.load(f))); } catch (e) { /* fall back to system fonts */ }
+
+    /* Privileges section: lay out each history as wrapped words first so the picture can be sized to fit. */
+    const mg = document.createElement('canvas').getContext('2d');
+    const flowLines = (steps, maxW) => {
+      const lines = [[]]; let x = 0;
+      const put = (txt, font, color) => {
+        mg.font = font;
+        const w = mg.measureText(txt).width, sp = mg.measureText(' ').width;
+        if (x > 0 && x + sp + w > maxW) { lines.push([]); x = 0; } else if (x > 0) x += sp;
+        lines[lines.length - 1].push({ txt, font, color, x, w }); x += w;
+      };
+      steps.forEach((s, i) => {
+        const last = i === steps.length - 1;
+        if (i > 0) put('→', '600 28px Inter, sans-serif', '#6E6A66');
+        s.toUpperCase().split(/\s+/).forEach((wd) => put(wd, last ? '700 30px Inter, sans-serif' : '600 28px Inter, sans-serif', last ? '#141414' : '#6E6A66'));
+      });
+      return lines;
+    };
+    const textX = duo ? 190 : 16;
+    const privLayout = PRIV_STATES.map(([k, label]) => {
+      const rows = S.players.map((p) => { const lines = flowLines(privChain(p, k), 1000 - textX - 24); return { lines, h: lines.length * 40 + 18 }; });
+      return { k, label, rows, h: 54 + 8 + rows.reduce((s, r) => s + r.h, 0) + 8 };
+    });
+    const yPriv = yMercy + 30 + mercyH + 60;
+    const H = yPriv + 20 + privLayout.reduce((s, l) => s + l.h + 18, 0) + 20;
     const cv = document.createElement('canvas');
     cv.width = W; cv.height = H;
     const g = cv.getContext('2d');
-    try { await Promise.all(['64px Anton', '600 28px "IBM Plex Mono"', '700 30px Inter'].map((f) => document.fonts.load(f))); } catch (e) { /* fall back to system fonts */ }
     const iconImg = async (n, size) => {
       const svgText = I.implement(n).replace('<svg ', `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" `).replace(/currentColor/g, '#141414').replace(/var\(--icon-cut,#fff\)/g, '#FBFAF8');
       const img = new Image();
@@ -534,6 +579,28 @@
         });
       }
       g.fillStyle = '#141414'; g.font = '700 18px Inter, sans-serif'; g.textAlign = 'center'; g.fillText(m.label.toUpperCase(), bx + bw / 2, y + mercyH - 8);
+    });
+
+    // Privileges: one block per state; inside, each Boy's history from his starting text to what he ended with
+    g.textAlign = 'left'; g.fillStyle = '#141414'; g.font = '40px Anton, Impact, sans-serif'; g.fillText('PRIVILEGES', 40, yPriv);
+    let py = yPriv + 20;
+    privLayout.forEach((L) => {
+      const c = L.k === 'clothed' ? '#141414' : '#7A2E8C', bx = 40, bw = W - 80;
+      g.fillStyle = '#fff'; g.fillRect(bx, py, bw, L.h); g.strokeStyle = c; g.lineWidth = 4; g.strokeRect(bx, py, bw, L.h);
+      g.fillStyle = c; g.fillRect(bx, py, bw, 54);
+      g.fillStyle = '#fff'; g.font = '36px Anton, Impact, sans-serif'; g.textAlign = 'left'; g.fillText(L.label.toUpperCase(), bx + 16, py + 40);
+      let y2 = py + 54 + 8;
+      L.rows.forEach((r, pi) => {
+        if (duo) {
+          g.fillStyle = col(pi); roundRect(bx + 16, y2 + 6, 150, 36, 8); g.fill();
+          g.fillStyle = '#fff'; g.font = '700 22px Inter, sans-serif'; g.textAlign = 'center'; g.fillText(S.players[pi].name, bx + 91, y2 + 31);
+        }
+        g.textAlign = 'left';
+        r.lines.forEach((ln, i) => ln.forEach((seg) => { g.font = seg.font; g.fillStyle = seg.color; g.fillText(seg.txt, bx + textX + seg.x, y2 + 32 + i * 40); }));
+        y2 += r.h;
+        if (duo && pi === 0) { g.strokeStyle = 'rgba(0,0,0,.12)'; g.lineWidth = 2; g.beginPath(); g.moveTo(bx + 16, y2 - 6); g.lineTo(bx + bw - 16, y2 - 6); g.stroke(); }
+      });
+      py += L.h + 18;
     });
 
     cv.toBlob((blob) => download(blob, 'deck-of-pain-session.png'), 'image/png');
@@ -662,8 +729,17 @@
     });
   }
 
+  /* "Last updated": the deploy workflow stamps the last commit time into index.html; local copies keep the placeholder and hide the line. */
+  function showLastUpdated() {
+    const el = $('last-updated'), t = Date.parse(el.dataset.ts);
+    if (isNaN(t)) return;
+    el.textContent = new Date(t).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' });
+    $('cr-updated').hidden = false;
+  }
+
   async function init() {
     show('cover');
+    showLastUpdated();
     fillDemoIcons();
     try {
       const res = await fetch('config/game.yaml');
