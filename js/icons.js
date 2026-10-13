@@ -27,10 +27,27 @@ DOP.icons = (function () {
   const rope = `<g fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"><ellipse cx="28" cy="38" rx="17" ry="13"/><path d="M16 28c-4-8-1-14 4-17M40 27c6-6 8-12 5-17"/></g><g stroke="var(--icon-cut,#fff)" stroke-width="1.6" stroke-dasharray="2 3.4"><ellipse cx="28" cy="38" rx="17" ry="13" fill="none"/></g>`;
   const badge = (sign, color) => `<circle cx="48" cy="16" r="12" fill="${color}"/><path d="${sign}" stroke="#fff" stroke-width="4" stroke-linecap="round"/>`;
 
+  /* "Assume the position" warning sign: a yellow diamond with Boy on hands and knees facing left,
+     arms straight, hands and knees on the same floor. Two players: a second Boy a step behind and to the side. */
+  const BOY = `<g fill="currentColor">
+    <circle cx="16" cy="50.5" r="6.6"/>
+    <path d="M30 46.5 C42 44.5 55 48 66 46.5 C73 45.8 77 50 76.5 54.5 C76 59 70 60 64 59.3 C54 58 45 57 38 58.8 C31 60.5 25 57.5 25 52.5 C25 49 27 47 30 46.5 Z"/>
+    <path d="M29.5 52 H37 L34.5 83 H30 Z"/>
+    <path d="M26 82 H36.5 Q39.5 82 39.5 84 Q39.5 86 36.5 86 H27 Q24 86 24 84 Q24 82 26 82 Z"/>
+    <path d="M62.5 54 H74 L72 80 H65 Z"/>
+    <path d="M66 79 H87 Q91.5 79 91.5 82.5 Q91.5 86 87 86 H66 Q62 86 62 82.5 Q62 79 66 79 Z"/>
+  </g>`;
+  const DIAMOND = `<g transform="rotate(45 100 100)"><rect x="30" y="30" width="140" height="140" rx="16" fill="#F7C600" stroke="#141414" stroke-width="7"/><rect x="39" y="39" width="122" height="122" rx="10" fill="none" stroke="#141414" stroke-width="3"/></g>`;
+  const floor = (x1, x2, y) => `<path d="M${x1} ${y} H${x2}" stroke="#141414" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+  const positionSign = (two) => `<svg class="pos-sign" viewBox="0 0 200 200" role="img" aria-label="${two ? 'Warning sign: two people on hands and knees' : 'Warning sign: a person on hands and knees'}" color="#141414">${DIAMOND}${two
+    ? `<g transform="translate(39 50) scale(0.82)"><g transform="translate(48 -17)">${BOY}</g><g transform="translate(0 4)">${BOY}</g>${floor(6, 96, 93)}</g>`
+    : `<g transform="translate(36 20) scale(1.3)">${BOY}${floor(21, 88, 91)}</g>`}</svg>`;
+
   return {
     implement: (name) => implement[name.toLowerCase()] || fallback,
     clothesMinus: svg(shorts + badge('M42 16h12', '#7A2E8C')),
     restraintPlus: svg(rope + badge('M42 16h12M48 10v12', '#7A2E8C')),
+    positionSign,
     privilege: svg(`<path d="M32 56S6 40 6 22a14 14 0 0126-6 14 14 0 0126 6c0 18-26 34-26 34z" fill="currentColor"/>`),
   };
 })();

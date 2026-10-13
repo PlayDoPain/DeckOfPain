@@ -27,8 +27,9 @@
   }
 
   /* ---------- modal ---------- */
-  function modal(bodyHtml, buttons) {
+  function modal(bodyHtml, buttons, opts = {}) {
     $('modal-body').innerHTML = bodyHtml;
+    $('modal').querySelector('.modal-box').classList.toggle('centered', !!opts.center);
     const box = $('modal-actions');
     box.innerHTML = '';
     buttons.forEach((b) => {
@@ -91,6 +92,16 @@
     setup.names = [String(cfg.DUO_NAME_1 || 'A'), String(cfg.DUO_NAME_2 || 'B')];
     setup.priv = [0, 1].map(() => ({ clothed: cfg.DEFAULT_PRIVILEGE_CLOTHED || 'Get a rub', restrained: cfg.DEFAULT_PRIVILEGE_RESTRAINED || 'Get a rub' }));
     renderTiles(); renderBoyBoxes(); renderPlayersToggle();
+  }
+
+  /* ---------- "Assume the position" ---------- */
+  /* Shown after Shuffle & Begin; the game (and its clock) starts when the Boy or Boys are Ready. */
+  function assumeThePosition() {
+    const two = setup.players === 2 && canDuo();
+    modal(`<div class="pos-wrap">${I.positionSign(two)}</div><h3>Assume the position</h3>
+      <p>${two ? 'Both Boys get into position. Sir begins when they are ready.' : 'Boy gets into position. Sir begins when he is ready.'}</p>`, [
+      { label: 'Ready', cls: 'btn-primary btn-ready', onClick: () => { setTimeout(() => { newGameState(); show('game'); buildBoards(); renderGame(); }, 0); } },
+    ], { center: true });
   }
 
   /* ---------- game state ---------- */
@@ -706,7 +717,7 @@
       else if (t.dataset.priv) setup.priv[Number(t.dataset.i)][t.dataset.priv] = t.value;
     });
     window.addEventListener('resize', () => { if (cfg && !$('screen-setup').hidden) renderPlayersToggle(); layout(); });
-    $('btn-start').addEventListener('click', () => { newGameState(); show('game'); buildBoards(); renderGame(); });
+    $('btn-start').addEventListener('click', assumeThePosition);
 
     $('boards').addEventListener('click', onBoardClick);
     $('hud-toggle').addEventListener('click', onBoardClick);
