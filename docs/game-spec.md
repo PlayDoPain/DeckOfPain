@@ -19,7 +19,7 @@ How the app is specified and the choices made along the way (v3.4, Patch 4). The
 ### Round
 - Shared counters: game, round, intensity (starts at 3, +1 each replay), and pile. Clothes off and Restraints are per player.
 - A 3D drawing pile that shrinks as cards are drawn.
-- Each player has a three-way switch: Clothed, Restrained, or Max. Max means nothing is left to remove or add, so face cards only add swats. There is no cap on restraints.
+- Each player has two switches: Clothed / Naked, and Free / Restrained / Max (Max means fully tied, so no more restraints can be added). The right switch cycles Free → Restrained → Max → Free. Allowed combinations: Clothed + Free, Naked + Free, Naked + Restrained, Naked + Max. Tying him up (Free → Restrained or Max) makes him Naked if he is not already, and getting dressed (Naked → Clothed) frees him. Face cards remove clothing while Clothed, add restraints while Restrained, and add only swats while Naked and Free (nothing left to remove, not yet tied, or a game without restraints) or at Max (nothing more to add). There is no cap on restraints. A switch shows the current state: white for Clothed and Free, purple for Naked and Restrained, black for Max.
 - Each player has a board with two panels:
   1. **Sir:** the cards drawn for that player, then implement, swats, and effect icons, then the Privilege when earned and the Mercy note.
   2. **Boy:** the hand, quick-pick buttons for each Mercy, a status line, and the Counter button (plus Transfer in two-player mode). The hand scrolls inside the panel; the buttons stay put.
@@ -58,7 +58,7 @@ Where the original rules sheet is silent, the app follows these choices.
 - One Mercy action per Boy per round. A straight flush offers both options.
 - A single card cannot reduce swats below 0. A pair is unavailable when there is nothing to re-roll into.
 - Straights allow Ace low or high, with no wrap-around.
-- A flush lets someone pick the implement from the selected list. Three of a kind rewrites the Privilege for the target's current state (Max uses the restrained text).
+- A flush lets someone pick the implement from the selected list. Three of a kind rewrites the Privilege for the target's current state (the restrained text applies once he is tied up, Restrained or Max; otherwise the clothed text applies, including while Naked and Free, since he is still free to move).
 - Played and drawn cards go to the discard pile. A replay reshuffles only the discards, and each Boy keeps his hand.
 
 ### Two players

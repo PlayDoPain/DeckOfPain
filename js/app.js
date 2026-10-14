@@ -9,7 +9,6 @@
   const titleCase = (s) => s.charAt(0).toUpperCase() + s.slice(1);
   const cardImg = (c) => `<img class="pcard" src="assets/cards/${c.file}" alt="${esc(E.cardName(c))}" draggable="false">`;
   const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
-  const STATES = [['clothed', 'Clothed'], ['restrained', 'Restrained'], ['max', 'Max']];
 
   let cfg = null;
   let setup = { selected: new Set(), players: 1, names: ['A', 'B'], priv: [{}, {}] };
@@ -111,7 +110,7 @@
     return {
       i, name: duo ? clean(setup.names[i], defaults[i]).toUpperCase() : 'BOY',
       privilege: { clothed: clean(setup.priv[i].clothed, 'Get a rub'), restrained: clean(setup.priv[i].restrained, 'Get a rub') },
-      state: 'clothed', hand: [], sir: [], implement: null, pickImpl: false,
+      clothing: 'clothed', bind: 'free', hand: [], sir: [], implement: null, pickImpl: false,
       sel: new Set(), optIndex: 0, acted: null, reduce: 0, mercyLog: [], privs: [], pickBy: null,
       clothes: 0, restraints: 0, newSir: false, newHand: new Set(), lastSwats: undefined,
       privOrig: null, privRevs: [],
@@ -144,14 +143,15 @@
     p.pickImpl = false; p.pickBy = null;
   }
   function pickPriority() { S.priority = S.duo ? Math.floor(Math.random() * 2) : 0; }
-  const privKey = (p) => (p.state === 'clothed' ? 'clothed' : 'restrained'); // Max uses the restrained text
+  /* Which of his two Privilege texts applies: the restrained one once he is tied up (Restrained or Max). */
+  const privKey = (p) => (p.bind === 'free' ? 'clothed' : 'restrained');
 
   function currentPunishment(p) {
     const b = E.punishment(p.sir);
     return {
       base: b.swats, reduce: p.reduce, swats: Math.max(0, b.swats - p.reduce), faces: b.faces,
-      clothes: p.state === 'clothed' ? b.faces : 0,
-      restraints: p.state === 'restrained' ? b.faces : 0, // Max: nothing left to remove or add
+      clothes: p.clothing === 'clothed' ? b.faces : 0, // tied up always means Naked, so this is 0 then
+      restraints: p.bind === 'restrained' ? b.faces : 0, // Naked and Free: nothing to remove yet to tie; Max: nothing more to add
     };
   }
 
@@ -311,8 +311,22 @@
     $('deck3d').classList.toggle('empty', n === 0);
   }
 
-  const toggleHtml = (p) => `<div class="toggle" role="group" aria-label="State">${STATES.map(([k, label]) =>
-    `<button type="button" data-state="${k}" class="${k}${p.state === k ? ' on' : ''}" aria-pressed="${p.state === k}">${label}</button>`).join('')}</div>`;
+  /* Two switches: Clothed / Naked, and Free / Restrained / Max (fully tied: no more restraints to add).
+     Allowed: Clothed+Free, Naked+Free, Naked+Restrained, Naked+Max. Tying him up leaves him Naked; getting dressed frees him. */
+  const BIND_LABEL = { free: 'Free', restrained: 'Restrained', max: 'Max' };
+  const toggleHtml = (p) => `<div class="toggle states" role="group" aria-label="Clothing and restraint">
+    <button type="button" data-toggle="clothing" class="${p.clothing === 'naked' ? 'on' : ''}" aria-pressed="${p.clothing === 'naked'}">${p.clothing === 'naked' ? 'Naked' : 'Clothed'}</button>
+    <button type="button" data-toggle="bind" class="${p.bind === 'free' ? '' : 'on ' + p.bind}" aria-pressed="${p.bind !== 'free'}">${BIND_LABEL[p.bind]}</button></div>`;
+
+  function flipSwitch(p, which) {
+    if (which === 'clothing') {
+      if (p.clothing === 'clothed') p.clothing = 'naked';
+      else { p.clothing = 'clothed'; p.bind = 'free'; } // getting dressed frees him
+    } else {
+      p.bind = p.bind === 'free' ? 'restrained' : p.bind === 'restrained' ? 'max' : 'free';
+      if (p.bind !== 'free') p.clothing = 'naked'; // tying him up leaves him naked
+    }
+  }
 
   function renderHud() {
     $('st-game').textContent = S.game;
@@ -672,8 +686,8 @@
   function onBoardClick(e) {
     const p = playerOf(e.target);
     if (!p) return;
-    const st = e.target.closest('[data-state]');
-    if (st) { p.state = st.dataset.state; renderGame(); return; }
+    const sw = e.target.closest('[data-toggle]');
+    if (sw) { flipSwitch(p, sw.dataset.toggle); renderGame(); return; }
     const pickImpl = e.target.closest('[data-pick]');
     if (pickImpl) { p.implement = pickImpl.dataset.pick; p.pickImpl = false; p.pickBy = null; renderGame(); return; }
     const card = e.target.closest('[data-card]');

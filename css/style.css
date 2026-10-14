@@ -49,12 +49,13 @@ body.mode-duo #app{max-width:1600px;}
 .btn-big{font-family:'Anton',Impact,sans-serif; font-weight:400; font-size:1.4rem; letter-spacing:1.5px; padding:12px 30px; min-height:56px;}
 .center-actions{display:flex; justify-content:center; gap:14px; flex-wrap:wrap; margin-top:18px;}
 
-/* ---- toggles (Clothed / Restrained / Max, and player count) ---- */
+/* ---- toggles (player count, and the Clothed/Naked and Free/Restrained switches) ---- */
 .toggle{display:flex; border:2px solid var(--ink); border-radius:10px; overflow:hidden; background:#fff;}
 .toggle button{flex:1; border:0; background:transparent; padding:9px 14px; min-height:44px; font-weight:800; white-space:nowrap;}
 .toggle button.on{background:var(--ink); color:#fff;}
-.toggle button.restrained.on{background:var(--clothes);}
-.toggle button.max.on{background:var(--punish);}
+.toggle.states button.on{background:var(--clothes); color:#fff;}
+.toggle.states button.max.on{background:var(--ink);}
+.toggle.states button + button{border-left:2px solid var(--ink);}
 .toggle button:disabled{opacity:.4; cursor:not-allowed;}
 
 /* ---- cover: scrollable rules, small persistent adults box ---- */
