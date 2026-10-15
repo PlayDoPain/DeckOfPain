@@ -9,6 +9,9 @@ How the app is specified and the choices made along the way (v3.4, Patch 4). The
 - A scrollable "how to play" panel shows a sample round built from the same pieces as the game (cards, icons, buttons) with small notes joined to each element by connector lines.
 - A small adults-only box stays at the bottom of the page with the Enter button.
 
+### Choose a game
+After Enter, two big cards: **Spanking** (the card game, which continues to Setup) and **Inspection**. Every screen after this has a clear way back: Setup and Inspection have a "← Games" button, the stats screen has a "Games" button, and the browser's Back button (or a swipe on iPhone) steps back through the screens too. Pressing Back during a game asks "End the game?" first, so a stray swipe can't lose it.
+
 ### Setup
 - All parameters live in `config/game.yaml`: the option list (each entry on or off by default), deck counts, hand sizes, default text, and default player names.
 - Players: 1 or 2. Two players is only offered on a landscape screen at least `DUO_MIN_WIDTH` pixels wide.
@@ -41,6 +44,10 @@ A button on the how-to-play panel saves the whole cover (title, sample round, an
 The footer shows "Last updated" with the date and time of the last deploy (stamped by the workflow; hidden on a local copy).
 
 Nothing is stored: no cookies, local storage, or server.
+
+## Inspection
+
+A plain body figure covered by tiles, one per part (clinical names, no detail). Tapping a tile flies it to the **Order** list, which sits beside the figure in landscape and below it in portrait; tapping a number in the list puts the part back. **Front / Back** turns the figure around. Most parts (head, shoulders, hands, thighs, feet) appear on both sides and are one item, so taking the left hand from either side removes it from both. The chest, abdomen, and penis are front only; the back and the butt are back only. **Random pick** sends one random part, **Random order** sends 3, 5, 10, or all of the remaining parts in a random order, and **Reset** puts everything back. Nothing is stored.
 
 ## Layout
 

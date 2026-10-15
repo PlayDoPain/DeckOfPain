@@ -81,6 +81,8 @@
 
       <h3 class="rules-h">New Game+</h3>
       <p class="rules-p">When the Drawing Pile runs out, start <b>New Game+</b>: the discards are reshuffled, Sir draws 1 more card each round, and Boy keeps his hand.</p>
+      <h3 class="rules-h">Inspection</h3>
+      <p class="rules-p">Pick <b>Inspection</b> after Enter for a quick mini game. Tap a part of the body, or let the app pick, to build an inspection order. <b>Back</b> turns the figure around.</p>
       <h3 class="rules-h">Two players</h3>
       <p class="rules-p">On a landscape tablet or desktop you can play with two Boys. Each Boy has his own cards, hand, and Punishment; a random Boy gets priority each round, but either may act. A Boy can <b>Counter</b> for himself or <b>Transfer</b> his Mercy to the other Boy. A transferred Straight gives the other Boy <i>your</i> Privilege, and with a transferred Flush you pick his implement. Each Boy has his own color.</p>
     </div>
@@ -94,8 +96,29 @@
     </div>
   </section>
 
+  <!-- Choose a game -->
+  <section id="screen-mode" class="screen" hidden>
+    <h2 class="mode-title">Choose a game</h2>
+    <div class="mode-grid">
+      <button type="button" class="mode-card spank" id="mode-spank">
+        <span class="mode-art" aria-hidden="true"><img src="assets/cards/SPADE-1.svg" alt=""><img src="assets/cards/HEART-13-KING.svg" alt=""></span>
+        <span class="mode-text"><span class="mode-name">Spanking</span>
+        <span class="mode-desc">The card game. Sir draws, Boy counters with Mercy. One or two players.</span></span>
+      </button>
+      <button type="button" class="mode-card inspect" id="mode-inspect">
+        <span class="mode-art" aria-hidden="true">
+          <svg viewBox="0 0 120 150"><g fill="#55504b"><ellipse cx="60" cy="18" rx="12" ry="14"/><rect x="55" y="30" width="10" height="12" rx="4"/><path d="M60 38 H55 C45 40 34 43 26 48 L32 66 C37 84 41 100 42 112 C43 124 38 132 37 142 L60 146 Z"/><path d="M60 38 H65 C75 40 86 43 94 48 L88 66 C83 84 79 100 78 112 C77 124 82 132 83 142 L60 146 Z"/></g>
+          <g fill="none" stroke="#141414" stroke-width="2.5"><rect x="42" y="3" width="36" height="34" rx="5"/><rect x="40" y="52" width="40" height="30" rx="5"/><rect x="40" y="88" width="19" height="52" rx="5"/><rect x="61" y="88" width="19" height="52" rx="5"/></g></svg>
+        </span>
+        <span class="mode-text"><span class="mode-name">Inspection</span>
+        <span class="mode-desc">Tap parts of the body to set an inspection order, or let the app choose.</span></span>
+      </button>
+    </div>
+  </section>
+
   <!-- Setup -->
   <section id="screen-setup" class="screen" hidden>
+    <div class="navrow"><button type="button" class="btn btn-small btn-ghost" id="nav-setup">&larr; Games</button></div>
     <div class="players-row">
       <span class="players-label">Players</span>
       <div class="toggle" role="group" aria-label="Number of players">
@@ -149,10 +172,54 @@
     </div>
   </section>
 
+  <!-- Inspection -->
+  <section id="screen-inspect" class="screen" hidden>
+    <div class="navrow"><button type="button" class="btn btn-small btn-ghost" id="nav-inspect">&larr; Games</button></div>
+    <h2 class="in-title">Inspection</h2>
+    <div class="in-controls">
+      <div class="toggle" role="group" aria-label="Side"><button type="button" id="in-front" class="on" aria-pressed="true">Front</button><button type="button" id="in-back" aria-pressed="false">Back</button></div>
+      <button type="button" class="btn" id="in-pick">Random pick</button>
+      <div class="in-rand"><button type="button" class="btn btn-primary" id="in-random">Random order</button>
+        <select id="in-n" aria-label="How many parts"><option value="3">3</option><option value="5" selected>5</option><option value="10">10</option><option value="all">All</option></select></div>
+      <button type="button" class="btn" id="in-reset">Reset</button>
+      <span class="in-count"><span id="in-left">14</span> left</span>
+    </div>
+    <div class="in-stage">
+      <div class="in-figure-wrap">
+        <div class="in-figure" id="in-figure">
+          <svg viewBox="0 0 300 540" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <g id="in-half">
+                <path d="M150 90 H141 C124 95 96 99 72 110 L84 150 C95 190 104 228 105 258 C106 282 92 300 90 324 L150 336 Z"/>
+                <path d="M72 108 C50 108 38 123 36 146 C33 192 29 242 25 288 C23 304 26 316 36 316 C48 316 51 303 52 290 C56 252 62 208 70 166 C77 142 84 128 83 117 Z"/>
+                <path d="M91 320 C88 378 90 430 96 470 C98 490 96 504 93 516 C84 524 80 534 90 538 L144 538 C147 530 145 512 145 498 C145 468 147 430 147 380 C147 354 149 342 150 332 Z"/>
+              </g>
+            </defs>
+            <g fill="#55504b">
+              <ellipse cx="150" cy="43" rx="26" ry="31"/>
+              <rect x="140" y="68" width="20" height="30" rx="7"/>
+              <use href="#in-half"/>
+              <use href="#in-half" transform="translate(300 0) scale(-1 1)"/>
+            </g>
+          </svg>
+          <div class="in-grid" id="in-grid-front" aria-label="Front of the body"></div>
+          <div class="in-grid" id="in-grid-back" aria-label="Back of the body" hidden></div>
+        </div>
+      </div>
+      <aside class="in-order">
+        <h3>Order</h3>
+        <ol class="in-order-list" id="in-order"></ol>
+        <p class="in-empty" id="in-empty">Tap a part of the body to inspect it. Tap a number to put it back.</p>
+      </aside>
+    </div>
+    <p class="in-note">Front and Back turn the figure around. Most parts show on both sides, and taking one removes it from both. The chest, abdomen and penis are front only; the back and the butt are back only. Left and right are the man's own.</p>
+  </section>
+
   <!-- Game over -->
   <section id="screen-over" class="screen" hidden>
     <div class="card-box over-box" id="over-box"></div>
     <div class="center-actions">
+      <button class="btn btn-big" id="btn-menu" type="button">Games</button>
       <button class="btn btn-big" id="btn-save-pic" type="button">Save as picture</button>
       <button class="btn btn-primary btn-big" id="btn-again" type="button">Play again</button>
     </div>
@@ -174,6 +241,7 @@
 <script src="js/yaml.js"></script>
 <script src="js/icons.js"></script>
 <script src="js/engine.js"></script>
+<script src="js/inspection.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

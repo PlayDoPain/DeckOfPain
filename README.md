@@ -9,6 +9,7 @@ A browser-based card game for one or two players. The app deals and scores the c
 - Poker-style hands (Single, Pair, Flush, Straight, Three of a Kind), a wild Joker, and replayable rounds.
 - One-player and two-player modes. Two players needs a landscape tablet or desktop screen.
 - A how-to-play page with an annotated sample round.
+- A second mini game, Inspection: tap parts of a body figure (or let the app pick) to build an order.
 - Game parameters set in [`config/game.yaml`](config/game.yaml).
 - Responsive layout for phones, tablets, and desktops, including Safari on iOS and iPadOS.
 - CSS-only animations (they switch off for visitors who prefer reduced motion).
@@ -40,6 +41,7 @@ node tests/engine.test.js
 | `index.html`, `css/style.css` | Page layout and styling |
 | `js/engine.js` | Deck, scoring, hand evaluation |
 | `js/app.js` | UI, round flow, "save as picture" |
+| `js/inspection.js` | The Inspection mini game |
 | `js/icons.js` | Vector icons |
 | `js/yaml.js` | Minimal reader for `config/game.yaml` |
 | `config/game.yaml` | All game parameters |

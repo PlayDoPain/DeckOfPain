@@ -15,8 +15,15 @@
   let S = null; // game state
 
   /* ---------- screens ---------- */
-  function show(name) {
-    ['cover', 'setup', 'game', 'over'].forEach((n) => ($('screen-' + n).hidden = n !== name));
+  const SCREENS = ['cover', 'mode', 'setup', 'game', 'over', 'inspect'];
+  let current = 'cover';
+  const trail = ['cover']; // the screens visited, so a Games button can behave like Back
+  /* Every screen change adds a history entry, so the browser's Back button (and an iPhone swipe) steps back
+     through the screens instead of leaving the site. */
+  function show(name, push = true) {
+    SCREENS.forEach((n) => ($('screen-' + n).hidden = n !== name));
+    current = name;
+    if (push && !(history.state && history.state.s === name)) { history.pushState({ s: name, i: trail.length }, ''); trail.push(name); }
     const b = document.body;
     b.classList.toggle('game-active', name === 'game');
     b.classList.toggle('cover-active', name === 'cover');
@@ -714,7 +721,21 @@
   }
 
   function bind() {
-    $('btn-enter').addEventListener('click', () => show('setup'));
+    $('btn-enter').addEventListener('click', () => show('mode'));
+    $('mode-spank').addEventListener('click', () => show('setup'));
+    $('mode-inspect').addEventListener('click', () => { DOP.inspection.enter(); show('inspect'); });
+    const toMenu = () => { if (trail[trail.length - 2] === 'mode') history.back(); else show('mode'); };
+    $('nav-setup').addEventListener('click', toMenu);
+    $('nav-inspect').addEventListener('click', toMenu);
+    $('btn-menu').addEventListener('click', () => { S = null; initSetup(); show('mode'); });
+    window.addEventListener('popstate', (e) => {
+      const target = (e.state && e.state.s) || 'cover', i = e.state && e.state.i !== undefined ? e.state.i : 0;
+      if (current === 'game') { history.pushState({ s: 'game', i: trail.length - 1 }, ''); confirmEnd(); return; } // Back during a game asks first
+      closeModal();
+      const to = target === 'game' || (target === 'over' && !S) ? 'mode' : target;
+      trail.length = Math.min(trail.length, i + 1); trail[i] = to;
+      show(to, false);
+    });
     $('impl-all').addEventListener('click', () => { setup.selected = new Set(Object.keys(cfg.IMPLEMENT_LIST)); renderTiles(); });
     $('impl-none').addEventListener('click', () => { setup.selected.clear(); renderTiles(); });
     $('impl-tiles').addEventListener('click', (e) => {
@@ -763,7 +784,8 @@
   }
 
   async function init() {
-    show('cover');
+    history.replaceState({ s: 'cover', i: 0 }, '');
+    show('cover', false);
     showLastUpdated();
     fillDemoIcons();
     try {
